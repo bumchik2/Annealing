@@ -1,5 +1,10 @@
 #include "problem.h"
 
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
 void Problem::init_() {
     // initialize some default answer
 
@@ -13,4 +18,15 @@ void Problem::init_() {
             answer[i].push_back(required_vertex_[j]);
         }
     }
+
+    total_distances.resize(answer.size());
+    for (unsigned i = 0; i < total_distances.size(); ++i) {
+        for (unsigned j = 0; j + 1 < answer[i].size(); ++j) {
+            total_distances[i] += distance_matrix.get(answer[i][j], answer[i][j + 1]);
+        }
+    }
+}
+
+void Problem::update_total_distance(int line_number, int delta_total_distance) {
+    total_distances[line_number] += delta_total_distance;
 }

@@ -26,7 +26,7 @@ public:
 private:
     void init_();
     void update_temperature_(int step_number);
-    void try_mutate_();
+    double try_mutate_();
 
     Problem& problem_;
     double temperature_;
@@ -36,4 +36,7 @@ private:
     vector<shared_ptr<Mutation>> mutations_;
 
     int steps_number_;
+
+    double current_total_penalty_ = 0;
+    const int history_period_ = 1000;
 };

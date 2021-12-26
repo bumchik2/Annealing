@@ -16,21 +16,26 @@ void Annealing::init_() {
         total_penalty += penalty->get_penalty(problem_);
     }
     penalty_history.push_back(total_penalty);
+    current_total_penalty_ = total_penalty;
 }
 
 void Annealing::work() {
     for (int i = 0; i < steps_number_; ++i) {
         update_temperature_(i);
-        try_mutate_();
+        current_total_penalty_ = try_mutate_();
+        if ((i != 0 && i % history_period_ == 0) || i + 1 == steps_number_) {
+            penalty_history.push_back(current_total_penalty_);
+        }
     }
-    assert(static_cast<int>(penalty_history.size()) == steps_number_ + 1);
 }
 
 void Annealing::update_temperature_(int step_number) {
     temperature_ = initial_temperature_ * (1.0 - static_cast<double>(step_number) / steps_number_);
 }
 
-void Annealing::try_mutate_() {
+double Annealing::try_mutate_() {
+    // returns new total penalty after the mutation did or did not happen
+
     // TODO: specific probability for each mutation
     int mutation_number = randint(0, mutations_.size());
     shared_ptr<Mutation>& mutation = mutations_[mutation_number];
@@ -39,11 +44,11 @@ void Annealing::try_mutate_() {
 
     double mutation_probability = pow(2.71, -delta_penalty / temperature_);
     double lucky = random_double();
-    double new_total_penalty = penalty_history[penalty_history.size() - 1];
+    double new_total_penalty = current_total_penalty_;
     if (lucky < mutation_probability) {
         mutation->mutate(problem_, mutation_seed);
         new_total_penalty += delta_penalty;
     }
 
-    penalty_history.push_back(new_total_penalty);
+    return new_total_penalty;
 }

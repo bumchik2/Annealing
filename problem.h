@@ -13,10 +13,15 @@ public:
         init_();
     }
 
+    void update_total_distance(int line_number, int delta_total_distance);
+
     const DistanceMatrix& distance_matrix;
 
     // 3 lines of vertex corresponding to permutations
     vector<vector<int>> answer;
+
+    // total distances for each line
+    vector<int> total_distances;
 
 private:
     // vertex numbers that have to present in each of the lines
