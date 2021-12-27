@@ -7,6 +7,8 @@
 #include "add_vertex_mutation.h"
 #include "maximum_penalty.h"
 #include "difference_penalty.h"
+#include "swap_between_lines_mutation.h"
+#include "transfer_mutation.h"
 
 #include <iostream>
 #include <vector>
@@ -23,10 +25,6 @@ using std::ofstream;
 
 
 int main() {
-    // TODO: more mutations (swap between different lines?)
-    // TODO: more penalties (required vertex, all vertex present etc.)
-    // OR: just add mutation (and remove AddVertexMutation) - swap between different lines !!!
-
     const int n = 5000; // number of vertex
     const DistanceMatrix distance_matrix = generate_matrix(n);
     const int required_vertex_number = n / 5;
@@ -38,7 +36,7 @@ int main() {
     Problem problem(distance_matrix, required_vertex);
 
     const double temperature = 100;
-    const int steps_number = 100 * 1000000;
+    const int steps_number = 1 * 1000000;
 
     cout << "total distances: " <<  problem.total_distances << endl;
     const vector<shared_ptr<Penalty>> penalties = {
@@ -48,6 +46,8 @@ int main() {
     };
     const vector<shared_ptr<Mutation>> mutations = {
         make_shared<SwapVertexMutation>(penalties),
+        make_shared<TransferMutation>(penalties),
+        make_shared<SwapBetweenLinesMutation>(penalties)
         // make_shared<AddVertexMutation>(penalties)
     };
 

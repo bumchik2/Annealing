@@ -1,9 +1,12 @@
 #pragma once
 
 #include <vector>
+#include <unordered_set>
+
 #include "distance_matrix.h"
 
 using std::vector;
+using std::unordered_set;
 
 class Problem {
 public:
@@ -12,6 +15,8 @@ public:
         distance_matrix(distance_matrix), required_vertex_(required_vertex) {
         init_();
     }
+
+    bool is_required_vertex(int v) const;
 
     void update_total_distance(int line_number, int delta_total_distance);
 
@@ -27,6 +32,7 @@ private:
     // vertex numbers that have to present in each of the lines
     // the rest vertex have to present in at least one line
     const vector<int>& required_vertex_;
+    unordered_set<int> required_vertex_set_;
 
     void init_();
 };
