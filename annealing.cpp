@@ -21,6 +21,7 @@ void Annealing::init_() {
 
 void Annealing::work() {
     for (int i = 0; i < steps_number_; ++i) {
+        srand(i);
         update_temperature_(i);
         current_total_penalty_ = try_mutate_();
         if ((i != 0 && i % history_period_ == 0) || i + 1 == steps_number_) {
@@ -79,8 +80,17 @@ void Annealing::update_temperature_(int step_number) {
 double Annealing::try_mutate_() {
     // returns new total penalty after the mutation did or did not happen
 
-    // TODO: specific probability for each mutation
-    int mutation_number = randint(0, mutations_.size());
+    int mutation_number = -1;
+    double mutation_lucky = random_double();
+    double total = 0;
+    for (unsigned i = 0; i < mutations_.size(); ++i) {
+        total += mutation_probabilities_[i];
+        if (mutation_lucky < total) {
+            mutation_number = i;
+            break;
+        }
+    }
+
     shared_ptr<Mutation>& mutation = mutations_[mutation_number];
     int mutation_seed = rand();
     double delta_penalty = mutation->get_delta_penalty(problem_, mutation_seed);

@@ -13,9 +13,9 @@ using std::shared_ptr;
 class Annealing {
 public:
     Annealing(Problem& problem, double temperature, const vector<shared_ptr<Penalty>>& penalties,
-              const vector<shared_ptr<Mutation>>& mutations, int steps_number):
-            problem_(problem), temperature_(temperature), initial_temperature_(temperature_),
-            penalties_(penalties), mutations_(mutations), steps_number_(steps_number) {
+            const vector<shared_ptr<Mutation>>& mutations, const vector<double>& mutation_probabilities, int steps_number):
+            problem_(problem), temperature_(temperature), initial_temperature_(temperature_), penalties_(penalties),
+            mutations_(mutations), mutation_probabilities_(mutation_probabilities), steps_number_(steps_number) {
         init_();
     }
 
@@ -35,6 +35,7 @@ private:
 
     vector<shared_ptr<Penalty>> penalties_;
     vector<shared_ptr<Mutation>> mutations_;
+    vector<double> mutation_probabilities_;
 
     int steps_number_;
 

@@ -9,6 +9,7 @@
 #include "difference_penalty.h"
 #include "swap_between_lines_mutation.h"
 #include "transfer_mutation.h"
+#include "swap_head_tail_mutation.h"
 #include "csv_utils.h"
 
 #include <iostream>
@@ -40,27 +41,35 @@ int main() {
 
     Problem problem(distance_matrix, required_vertex);
 
-    const double temperature = 100;
-    const int steps_number = 10 * 1000000;
+    const double temperature = 25;
+    const int steps_number = 1000 * 1000000;
 
     cout << "total distances: " <<  problem.total_distances << endl;
     const vector<shared_ptr<Penalty>> penalties = {
-        make_shared<DistancePenalty>(0),
+        make_shared<DistancePenalty>(10),
         make_shared<MaximumPenalty>(30),
-        make_shared<DifferencePenalty>(0)
+        make_shared<DifferencePenalty>(2)
     };
     const vector<shared_ptr<Mutation>> mutations = {
         make_shared<SwapVertexMutation>(penalties),
         make_shared<TransferMutation>(penalties),
-        make_shared<SwapBetweenLinesMutation>(penalties)
+        make_shared<SwapBetweenLinesMutation>(penalties),
+        make_shared<SwapHeadTailMutation>(penalties)
         // make_shared<AddVertexMutation>(penalties)
     };
+    const vector<double> mutation_probabilities = {
+        0.33,
+        0.33,
+        0.33,
+        0.01
+    };
+    assert(mutations.size() == mutation_probabilities.size());
 
     cout << "Initial penalties:" << endl;
     print_penalties(penalties, problem);
     cout << endl;
 
-    Annealing annealing(problem, temperature, penalties, mutations, steps_number);
+    Annealing annealing(problem, temperature, penalties, mutations, mutation_probabilities, steps_number);
     annealing.work();
 
     ofstream out_penalties("results/total_penalties.txt");
