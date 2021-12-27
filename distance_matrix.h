@@ -1,8 +1,10 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 using std::vector;
+using std::string;
 
 class DistanceMatrix {
 public:
@@ -22,3 +24,4 @@ private:
 };
 
 DistanceMatrix generate_matrix(int n, int max_distance=7, bool symmetric=false);
+DistanceMatrix read_matrix(int n, const string& filename);

@@ -26,6 +26,49 @@ void Annealing::work() {
         if ((i != 0 && i % history_period_ == 0) || i + 1 == steps_number_) {
             penalty_history.push_back(current_total_penalty_);
         }
+        if ((swap_tails_period_ > 0) && (i % swap_tails_period_ == 0)) {
+            swap_tails_();
+        }
+    }
+}
+
+void Annealing::swap_tails_() {
+    // PROBLEM with this idea: required vertex go brr...
+
+    int line_number1 = randint(0, problem_.answer.size());
+    int line_number2 = (randint(1, problem_.answer.size()) + line_number1) % problem_.answer.size();
+    int delta = 5;
+    unsigned pos1 = unsigned(randint(-delta, delta) + 0.5 * problem_.answer[line_number1].size());
+    unsigned pos2 = unsigned(randint(-delta, delta) + 0.5 * problem_.answer[line_number2].size());
+
+    // swap tails of line1 and line2, starting with pos1 and pos2
+    vector<int> tail1;
+    vector<int> tail2;
+    for (unsigned i = pos1; i < problem_.answer[line_number1].size(); ++i) {
+        tail1.push_back(problem_.answer[line_number1][i]);
+    }
+    for (unsigned i = pos1; i < problem_.answer[line_number1].size(); ++i) {
+        tail1.pop_back();
+    }
+    for (unsigned i = pos2; i < problem_.answer[line_number2].size(); ++i) {
+        tail2.push_back(problem_.answer[line_number2][i]);
+    }
+    for (unsigned i = pos2; i < problem_.answer[line_number2].size(); ++i) {
+        tail2.pop_back();
+    }
+    for (unsigned i = 0; i < tail1.size(); ++i) {
+        problem_.answer[line_number2].push_back(tail1[i]);
+    }
+    for (unsigned i = 0; i < tail2.size(); ++i) {
+        problem_.answer[line_number1].push_back(tail2[i]);
+    }
+
+    // update total_distances
+    problem_.initialize_total_distances();
+    // update penalties correctly
+    current_total_penalty_ = 0;
+    for (const auto& penalty: penalties_) {
+        current_total_penalty_ += penalty->get_penalty(problem_);
     }
 }
 

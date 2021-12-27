@@ -18,6 +18,7 @@ public:
 
     bool is_required_vertex(int v) const;
 
+    void initialize_total_distances();
     void update_total_distance(int line_number, int delta_total_distance);
 
     const DistanceMatrix& distance_matrix;

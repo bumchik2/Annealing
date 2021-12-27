@@ -2,11 +2,13 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 
 using std::ostream;
 using std::vector;
 using std::cout;
 using std::endl;
+using std::stoi;
 
 // rand generates random number between 0 and RAND_MAX inclusive
 
@@ -36,4 +38,8 @@ double random_double(int seed) {
 void remove_file(const std::string& file_name) {
   const char* cstr = file_name.c_str();
   std::remove(cstr);
+}
+
+int string_to_int(const string& s) {
+    return stoi(s);
 }

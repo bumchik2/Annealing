@@ -25,3 +25,5 @@ ostream& operator << (ostream& out, const vector<T>& v) {
     }
     return out;
 }
+
+int string_to_int(const string& s);

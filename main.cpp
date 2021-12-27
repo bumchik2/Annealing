@@ -9,6 +9,7 @@
 #include "difference_penalty.h"
 #include "swap_between_lines_mutation.h"
 #include "transfer_mutation.h"
+#include "csv_utils.h"
 
 #include <iostream>
 #include <vector>
@@ -22,12 +23,16 @@ using std::endl;
 using std::shared_ptr;
 using std::make_shared;
 using std::ofstream;
-
+using std::ifstream;
 
 int main() {
-    const int n = 5000; // number of vertex
-    const DistanceMatrix distance_matrix = generate_matrix(n);
-    const int required_vertex_number = n / 5;
+    // TODO: transfer within the same line
+    // TODO: smarter problem initializing
+    // TODO: swap halves of 2 random lines once in several iterations in order to avoid stagnation
+
+    const int n = 5040; // number of vertex
+    const DistanceMatrix distance_matrix = read_matrix(n, "distance_matrix.csv");
+    const int required_vertex_number = n / 42;
     vector<int> required_vertex;
     for (int i = 0; i < required_vertex_number; ++i) {
         required_vertex.push_back(i);
@@ -36,13 +41,13 @@ int main() {
     Problem problem(distance_matrix, required_vertex);
 
     const double temperature = 100;
-    const int steps_number = 1 * 1000000;
+    const int steps_number = 10 * 1000000;
 
     cout << "total distances: " <<  problem.total_distances << endl;
     const vector<shared_ptr<Penalty>> penalties = {
-        make_shared<DistancePenalty>(10),
+        make_shared<DistancePenalty>(0),
         make_shared<MaximumPenalty>(30),
-        make_shared<DifferencePenalty>(2)
+        make_shared<DifferencePenalty>(0)
     };
     const vector<shared_ptr<Mutation>> mutations = {
         make_shared<SwapVertexMutation>(penalties),
@@ -58,13 +63,24 @@ int main() {
     Annealing annealing(problem, temperature, penalties, mutations, steps_number);
     annealing.work();
 
-    ofstream out("results/total_penalties.txt");
-    out << annealing.penalty_history;
-    out.close();
+    ofstream out_penalties("results/total_penalties.txt");
+    out_penalties << annealing.penalty_history;
+    out_penalties.close();
+
+    ofstream out_answer("results/answer.txt");
+    for (unsigned i = 0; i < problem.answer.size(); ++i) {
+        out_answer << problem.answer[i] << endl;
+    }
+    out_answer.close();
 
     cout << "Expected total penalty: " << annealing.penalty_history[annealing.penalty_history.size() - 1] << endl;
     cout << "Result penalties:" << endl;
     print_penalties(penalties, problem);
     cout << endl;
+
+    cout << "Vertex distribution in the answer:" << endl;
+    for (unsigned i = 0; i < problem.answer.size(); ++i) {
+        cout << problem.answer[i].size() << endl;
+    }
     return 0;
 }

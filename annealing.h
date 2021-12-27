@@ -25,6 +25,7 @@ public:
 
 private:
     void init_();
+    void swap_tails_();
     void update_temperature_(int step_number);
     double try_mutate_();
 
@@ -39,4 +40,5 @@ private:
 
     double current_total_penalty_ = 0;
     const int history_period_ = 1000;
+    const int swap_tails_period_ = -1;
 };
