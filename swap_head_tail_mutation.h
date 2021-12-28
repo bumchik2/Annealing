@@ -20,6 +20,6 @@ public:
     void mutate(Problem& problem, int random_seed) override;
 
 private:
-    int get_delta_distance_(const Problem& problem, int line_number, unsigned pos);
+    double get_delta_distance_(const Problem& problem, int line_number, unsigned pos);
 
 };

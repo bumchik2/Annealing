@@ -19,6 +19,7 @@ public:
         init_();
     }
 
+    void make_step(int step_number);
     void work();
 
     vector<double> penalty_history;

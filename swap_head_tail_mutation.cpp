@@ -18,11 +18,11 @@ double SwapHeadTailMutation::get_delta_penalty(const Problem& problem, int rando
     int line_number = randint(0, problem.answer.size());
     unsigned pos = randint(1, problem.answer.size());
 
-    int delta_distance = get_delta_distance_(problem, line_number, pos);
+    double delta_distance = get_delta_distance_(problem, line_number, pos);
 
-    vector<int> total_distances = problem.total_distances;
-    int min1 = 1000000000;
-    int max1 = -min1, min2 = min1, max2 = -min1;
+    vector<double> total_distances = problem.total_distances;
+    double min1 = 1000000000;
+    double max1 = -min1, min2 = min1, max2 = -min1;
     for (unsigned i = 0; i < total_distances.size(); ++i) {
         min1 = min(min1, total_distances[i]);
         max1 = max(max1, total_distances[i]);
@@ -44,7 +44,7 @@ void SwapHeadTailMutation::mutate(Problem& problem, int random_seed) {
     int line_number = randint(0, problem.answer.size());
     unsigned pos = randint(1, problem.answer.size());
 
-    int delta_distance = get_delta_distance_(problem, line_number, pos);
+    double delta_distance = get_delta_distance_(problem, line_number, pos);
     problem.update_total_distance(line_number, delta_distance);
 
     vector<int> new_line;
@@ -57,7 +57,7 @@ void SwapHeadTailMutation::mutate(Problem& problem, int random_seed) {
     problem.answer[line_number] = std::move(new_line);
 }
 
-int SwapHeadTailMutation::get_delta_distance_(const Problem& problem, int line_number, unsigned pos) {
+double SwapHeadTailMutation::get_delta_distance_(const Problem& problem, int line_number, unsigned pos) {
     // ... - a - b - ...
     // index of b is pos
     int a = problem.answer[line_number][pos - 1];
@@ -65,7 +65,7 @@ int SwapHeadTailMutation::get_delta_distance_(const Problem& problem, int line_n
     int first = problem.answer[line_number][0];
     int last = problem.answer[line_number][problem.answer[line_number].size() - 1];
 
-    int delta_distance = 0;
+    double delta_distance = 0;
     delta_distance += (problem.distance_matrix.get(last, first) - problem.distance_matrix.get(a, b));
     return delta_distance;
 }

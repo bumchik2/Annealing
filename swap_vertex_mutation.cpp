@@ -60,9 +60,9 @@ double SwapVertexMutation::get_delta_penalty(
     double delta_distance = get_delta_distance_(problem, line_number, pos1, pos2);
     double delta_distance_penalty = delta_distance * penalty_sizes_["Distance penalty"];
 
-    vector<int> total_distances = problem.total_distances;
-    int min1 = 1000000000;
-    int max1 = -min1, min2 = min1, max2 = -min1;
+    vector<double> total_distances = problem.total_distances;
+    double min1 = 1000000000;
+    double max1 = -min1, min2 = min1, max2 = -min1;
     for (unsigned i = 0; i < total_distances.size(); ++i) {
         min1 = min(min1, total_distances[i]);
         max1 = max(max1, total_distances[i]);

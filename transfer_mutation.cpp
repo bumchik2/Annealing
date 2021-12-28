@@ -28,11 +28,11 @@ double TransferMutation::get_delta_penalty(
         return 0;
     }
 
-    vector<int> delta_distances = get_delta_distances_(problem, line_number1, line_number2, pos1, pos2);
+    vector<double> delta_distances = get_delta_distances_(problem, line_number1, line_number2, pos1, pos2);
     assert(delta_distances.size() == 2);
-    vector<int> total_distances = problem.total_distances;
-    int min1 = 1000000000;
-    int max1 = -min1, min2 = min1, max2 = -min1;
+    vector<double> total_distances = problem.total_distances;
+    double min1 = 1000000000;
+    double max1 = -min1, min2 = min1, max2 = -min1;
     for (unsigned i = 0; i < total_distances.size(); ++i) {
         min1 = min(min1, total_distances[i]);
         max1 = max(max1, total_distances[i]);
@@ -66,7 +66,7 @@ void TransferMutation::mutate(
         return;
     }
 
-    vector<int> delta_distances = get_delta_distances_(problem, line_number1, line_number2, pos1, pos2);
+    vector<double> delta_distances = get_delta_distances_(problem, line_number1, line_number2, pos1, pos2);
     problem.update_total_distance(line_number1, delta_distances[0]);
     problem.update_total_distance(line_number2, delta_distances[1]);
 
@@ -75,14 +75,14 @@ void TransferMutation::mutate(
     problem.answer[line_number2].insert(iterator_pos, v);
 }
 
-vector<int> TransferMutation::get_delta_distances_(const Problem& problem,
+vector<double> TransferMutation::get_delta_distances_(const Problem& problem,
         int line_number1, int line_number2, unsigned pos1, unsigned pos2) {
     assert(line_number1 != line_number2);
     // line_number1: ... - a - v - b - ...
     // line_number2: ... - c - < insert position > - d - ...
     int v = problem.answer[line_number1][pos1];
 
-    int delta_distance1 = 0;
+    double delta_distance1 = 0;
     if (pos1 != 0) {
         int a = problem.answer[line_number1][pos1 - 1];
         delta_distance1 -= problem.distance_matrix.get(a, v);
@@ -97,7 +97,7 @@ vector<int> TransferMutation::get_delta_distances_(const Problem& problem,
         delta_distance1 += problem.distance_matrix.get(a, b);
     }
 
-    int delta_distance2 = 0;
+    double delta_distance2 = 0;
     if (pos2 != 0) {
         int c = problem.answer[line_number2][pos2 - 1];
         delta_distance2 += problem.distance_matrix.get(c, v);

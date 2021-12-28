@@ -10,11 +10,11 @@ using std::cout;
 using std::endl;
 
 double DifferencePenalty::get_penalty(const Problem& problem) {
-    int maximum = -1000000000;
-    int minimum = -maximum;
+    double maximum = -1000000000;
+    double minimum = -maximum;
 
     for (unsigned i = 0; i < problem.answer.size(); ++i) {
-        int total_distance = 0;
+        double total_distance = 0;
         for (unsigned j = 0; j + 1 < problem.answer[i].size(); ++j) {
             int v1 = problem.answer[i][j];
             int v2 = problem.answer[i][j + 1];

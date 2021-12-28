@@ -32,6 +32,6 @@ public:
     }
 
 protected:
-    unordered_map<string, int> penalty_sizes_;
+    unordered_map<string, double> penalty_sizes_;
 
 };

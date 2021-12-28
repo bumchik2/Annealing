@@ -21,15 +21,25 @@ void Annealing::init_() {
 
 void Annealing::work() {
     for (int i = 0; i < steps_number_; ++i) {
-        srand(i);
-        update_temperature_(i);
-        current_total_penalty_ = try_mutate_();
-        if ((i != 0 && i % history_period_ == 0) || i + 1 == steps_number_) {
-            penalty_history.push_back(current_total_penalty_);
-        }
-        if ((swap_tails_period_ > 0) && (i % swap_tails_period_ == 0)) {
-            swap_tails_();
-        }
+        make_step(i);
+    }
+}
+
+void Annealing::make_step(int step_number) {
+    srand(step_number);
+    update_temperature_(step_number);
+
+    int delta_vertex_number = 0;
+    for (unsigned i = 0; i < problem_.answer.size(); ++i) { delta_vertex_number -= problem_.answer[i].size(); }
+    current_total_penalty_ = try_mutate_();
+    for (unsigned i = 0; i < problem_.answer.size(); ++i) { delta_vertex_number += problem_.answer[i].size(); }
+    assert(delta_vertex_number == 0);
+
+    if ((step_number != 0 && step_number % history_period_ == 0) || step_number + 1 == steps_number_) {
+        penalty_history.push_back(current_total_penalty_);
+    }
+    if ((swap_tails_period_ > 0) && (step_number % swap_tails_period_ == 0)) {
+        swap_tails_();
     }
 }
 

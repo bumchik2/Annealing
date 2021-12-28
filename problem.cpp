@@ -1,4 +1,5 @@
 #include "problem.h"
+#include "utils.h"
 
 #include <iostream>
 #include <cassert>
@@ -16,10 +17,10 @@ vector<int> make_answer_from_part(const DistanceMatrix& distance_matrix, unorder
     part.erase(*part.begin());
 
     while(!part.empty()) {
-        int min_distance = 1000000000;
+        double min_distance = 1000000000;
         int imin_distance = -1;
         for (const auto& item: part) {
-            int distance = distance_matrix.get(answer[answer.size() - 1], item);
+            double distance = distance_matrix.get(answer[answer.size() - 1], item);
             if (distance < min_distance) {
                 min_distance = distance;
                 imin_distance = item;
@@ -32,7 +33,7 @@ vector<int> make_answer_from_part(const DistanceMatrix& distance_matrix, unorder
 }
 
 void Problem::initialize_total_distances() {
-    total_distances = vector<int>();
+    total_distances = vector<double>();
     total_distances.resize(answer.size());
     for (unsigned i = 0; i < total_distances.size(); ++i) {
         for (unsigned j = 0; j + 1 < answer[i].size(); ++j) {
@@ -44,7 +45,7 @@ void Problem::initialize_total_distances() {
 void Problem::init_() {
     // initialize some default answer
 
-    answer.resize(3);
+    answer.resize(problem_size_);
 
     // initialize required_vertex_set_
     for (unsigned i = 0; i < required_vertex_.size(); ++i) {
@@ -60,8 +61,9 @@ void Problem::init_() {
                 parts[j].insert(v);
             }
         } else {
+            parts[randint(0, parts.size())].insert(v);
             // parts[0].insert(v);
-            parts[v % parts.size()].insert(v);
+            // parts[v % parts.size()].insert(v);
         }
     }
 
@@ -74,7 +76,7 @@ void Problem::init_() {
     initialize_total_distances();
 }
 
-void Problem::update_total_distance(int line_number, int delta_total_distance) {
+void Problem::update_total_distance(int line_number, double delta_total_distance) {
     total_distances[line_number] += delta_total_distance;
 }
 

@@ -13,7 +13,7 @@ using std::min;
 using std::max;
 
 double AddVertexMutation::get_delta_distance_(const Problem& problem, int line_number, unsigned pos, int v) {
-    int delta_distance = 0;
+    double delta_distance = 0;
     if (pos != 0) {
         delta_distance += problem.distance_matrix.get(problem.answer[line_number][pos - 1], v);
     }
@@ -38,9 +38,9 @@ double AddVertexMutation::get_delta_penalty(
     double delta_distance = get_delta_distance_(problem, line_number, pos, v);
     double delta_distance_penalty = delta_distance * penalty_sizes_["Distance penalty"];
 
-    vector<int> total_distances = problem.total_distances;
-    int min1 = 1000000000;
-    int max1 = -min1, min2 = min1, max2 = -min1;
+    vector<double> total_distances = problem.total_distances;
+    double min1 = 1000000000;
+    double max1 = -min1, min2 = min1, max2 = -min1;
     for (unsigned i = 0; i < total_distances.size(); ++i) {
         min1 = min(min1, total_distances[i]);
         max1 = max(max1, total_distances[i]);

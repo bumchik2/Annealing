@@ -3,12 +3,14 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <sstream>
 
 using std::ostream;
 using std::vector;
 using std::cout;
 using std::endl;
 using std::stoi;
+using std::stringstream;
 
 // rand generates random number between 0 and RAND_MAX inclusive
 
@@ -42,4 +44,10 @@ void remove_file(const std::string& file_name) {
 
 int string_to_int(const string& s) {
     return stoi(s);
+}
+
+string int_to_string(int a) {
+    stringstream ss;
+    ss << a;
+    return ss.str();
 }
