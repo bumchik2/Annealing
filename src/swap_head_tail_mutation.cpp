@@ -13,10 +13,24 @@ using std::endl;
 using std::min;
 using std::max;
 
+vector<int> SwapHeadTailMutation::choose_mutation_parameters_(const Problem& problem) {
+    int line_number = -1;
+    int pos = -1;
+    while(line_number == -1 || problem.answer[line_number].size() < 2) {
+        line_number = randint(0, problem.answer.size());
+        if (problem.answer[line_number].size() < 2) {
+            continue;
+        }
+        pos = randint(1, problem.answer[line_number].size());
+    }
+    return {line_number, pos};
+}
+
 double SwapHeadTailMutation::get_delta_penalty(const Problem& problem, int random_seed) {
     srand(random_seed);
-    int line_number = randint(0, problem.answer.size());
-    unsigned pos = randint(1, problem.answer.size());
+    vector<int> parameters = choose_mutation_parameters_(problem);
+    int line_number = parameters[0];
+    unsigned pos = parameters[1];
 
     double delta_distance = get_delta_distance_(problem, line_number, pos);
 
@@ -36,13 +50,16 @@ double SwapHeadTailMutation::get_delta_penalty(const Problem& problem, int rando
     double delta_distance_penalty = delta_distance * penalty_sizes_["Distance penalty"];
     double delta_difference_penalty = ((max2 - min2) - (max1 - min1)) * penalty_sizes_["Difference penalty"];
     double delta_maximum_penalty = (max2 - max1) * penalty_sizes_["Maximum penalty"];
-    return delta_distance_penalty + delta_difference_penalty + delta_maximum_penalty;
+    // no changes in locations counts here
+    double delta_difference_locations_penalty = 0;
+    return delta_distance_penalty + delta_difference_penalty + delta_maximum_penalty + delta_difference_locations_penalty;
 }
 
 void SwapHeadTailMutation::mutate(Problem& problem, int random_seed) {
     srand(random_seed);
-    int line_number = randint(0, problem.answer.size());
-    unsigned pos = randint(1, problem.answer.size());
+    vector<int> parameters = choose_mutation_parameters_(problem);
+    int line_number = parameters[0];
+    unsigned pos = parameters[1];
 
     double delta_distance = get_delta_distance_(problem, line_number, pos);
     problem.update_total_distance(line_number, delta_distance);
@@ -69,3 +86,4 @@ double SwapHeadTailMutation::get_delta_distance_(const Problem& problem, int lin
     delta_distance += (problem.distance_matrix.get(last, first) - problem.distance_matrix.get(a, b));
     return delta_distance;
 }
+

@@ -4,7 +4,9 @@
 #include <utility>
 #include <stdexcept>
 #include <iostream>
+#include <vector>
 
+using std::vector;
 using std::swap;
 using std::runtime_error;
 using std::cout;
@@ -41,13 +43,26 @@ double SwapVertexMutation::get_delta_distance_(
     return result;
 }
 
+vector<int> SwapVertexMutation::choose_mutation_parameters_(const Problem& problem) {
+    int line_number = -1, pos1 = -1, pos2 = -1;
+    while (line_number == -1 || problem.answer[line_number].empty()) {
+        line_number = randint(0, problem.answer.size());
+        if (problem.answer[line_number].empty()) {
+            continue;
+        }
+        pos1 = randint(0, problem.answer[line_number].size());
+        pos2 = randint(0, problem.answer[line_number].size());
+    }
+    return {line_number, pos1, pos2};
+}
+
 double SwapVertexMutation::get_delta_penalty(
         const Problem& problem, int random_seed) {
     srand(random_seed);
-
-    int line_number = randint(0, problem.answer.size());
-    int pos1 = randint(0, problem.answer[line_number].size());
-    int pos2 = randint(0, problem.answer[line_number].size());
+    vector<int> parameters = choose_mutation_parameters_(problem);
+    int line_number = parameters[0];
+    unsigned pos1 = parameters[1];
+    unsigned pos2 = parameters[2];
 
     if (pos1 > pos2) {
         swap(pos1, pos2);
@@ -75,15 +90,17 @@ double SwapVertexMutation::get_delta_penalty(
 
     double delta_difference_penalty = ((max2 - min2) - (max1 - min1)) * penalty_sizes_["Difference penalty"];
     double delta_maximum_penalty = (max2 - max1) * penalty_sizes_["Maximum penalty"];
-    return delta_distance_penalty + delta_difference_penalty + delta_maximum_penalty;
+    // no changes in locations counts here
+    double delta_difference_locations_penalty = 0;
+    return delta_distance_penalty + delta_difference_penalty + delta_maximum_penalty + delta_difference_locations_penalty;
 }
 
 void SwapVertexMutation::mutate(Problem& problem, int random_seed) {
     srand(random_seed);
-
-    int line_number = randint(0, problem.answer.size());
-    int pos1 = randint(0, problem.answer[line_number].size());
-    int pos2 = randint(0, problem.answer[line_number].size());
+    vector<int> parameters = choose_mutation_parameters_(problem);
+    int line_number = parameters[0];
+    unsigned pos1 = parameters[1];
+    unsigned pos2 = parameters[2];
 
     if (pos1 == pos2) {
         return;

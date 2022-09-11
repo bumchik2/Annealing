@@ -5,7 +5,9 @@
 #include <stdexcept>
 #include <iostream>
 #include <cassert>
+#include <vector>
 
+using std::vector;
 using std::swap;
 using std::runtime_error;
 using std::cout;
@@ -13,15 +15,31 @@ using std::endl;
 using std::min;
 using std::max;
 
+vector<int> SwapBetweenLinesMutation::choose_mutation_parameters_(const Problem& problem) {
+    int line_number1 = -1, line_number2 = -1, pos1 = -1, pos2 = -1;
+    while (line_number1 == -1 || problem.answer[line_number1].empty() || problem.answer[line_number2].empty()) {
+        line_number1 = randint(0, problem.answer.size());
+        line_number2 = (line_number1 + randint(1, problem.answer.size())) % problem.answer.size();
+        if (problem.answer[line_number1].empty() || problem.answer[line_number2].empty()) {
+            continue;
+        }
+        pos1 = randint(0, problem.answer[line_number1].size());
+        pos2 = randint(0, problem.answer[line_number2].size());
+    }
+    
+    return std::vector<int>{line_number1, line_number2, pos1, pos2};
+}
+
 double SwapBetweenLinesMutation::get_delta_penalty(
         const Problem& problem, int random_seed) {
     srand(random_seed);
 
-    int line_number1 = randint(0, problem.answer.size());
-    int line_number2 = (line_number1 + randint(1, problem.answer.size())) % problem.answer.size();
-    unsigned pos1 = randint(0, problem.answer[line_number1].size());
-    unsigned pos2 = randint(0, problem.answer[line_number2].size());
-
+    vector<int> parameters = choose_mutation_parameters_(problem);
+    int line_number1 = parameters[0];
+    int line_number2 = parameters[1];
+    unsigned pos1 = parameters[2];
+    unsigned pos2 = parameters[3];
+    
     int v1 = problem.answer[line_number1][pos1];
     int v2 = problem.answer[line_number2][pos2];
     if ((problem.is_required_vertex(v1)) || (problem.is_required_vertex(v2))) {
@@ -53,17 +71,20 @@ double SwapBetweenLinesMutation::get_delta_penalty(
     double delta_distance_penalty = delta_distance * penalty_sizes_["Distance penalty"];
     double delta_difference_penalty = ((max2 - min2) - (max1 - min1)) * penalty_sizes_["Difference penalty"];
     double delta_maximum_penalty = (max2 - max1) * penalty_sizes_["Maximum penalty"];
-    return delta_distance_penalty + delta_difference_penalty + delta_maximum_penalty;
+    // swapping two vertex between routes does not change max_locations - min_locations
+    double delta_difference_locations_penalty = 0;
+    return delta_distance_penalty + delta_difference_penalty + delta_maximum_penalty + delta_difference_locations_penalty;
 }
 
 void SwapBetweenLinesMutation::mutate(
         Problem& problem, int random_seed) {
     srand(random_seed);
 
-    int line_number1 = randint(0, problem.answer.size());
-    int line_number2 = (line_number1 + randint(1, problem.answer.size())) % problem.answer.size();
-    unsigned pos1 = randint(0, problem.answer[line_number1].size());
-    unsigned pos2 = randint(0, problem.answer[line_number2].size());
+    vector<int> parameters = choose_mutation_parameters_(problem);
+    int line_number1 = parameters[0];
+    int line_number2 = parameters[1];
+    unsigned pos1 = parameters[2];
+    unsigned pos2 = parameters[3];
 
     int v1 = problem.answer[line_number1][pos1];
     int v2 = problem.answer[line_number2][pos2];

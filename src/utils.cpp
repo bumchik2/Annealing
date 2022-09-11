@@ -20,15 +20,15 @@ int randint(int l, int r, int seed) {
         srand(seed);
     }
     // random int between l inclusive and r exclusive
-    int big_rand = rand() * (RAND_MAX - 1) + rand();
-    return l + big_rand % (r - l);
+    long long big_rand = static_cast<long long>(rand()) * (RAND_MAX - 1) + rand();
+    return static_cast<int>(l + big_rand % (r - l));
 }
 
 double random_double(int seed) {
     if (seed != -1) {
         srand(seed);
     }
-    double big_rand = rand() * (RAND_MAX - 1) + rand();
+    double big_rand = static_cast<double>(rand()) * (RAND_MAX - 1) + rand();
     double result = big_rand / (static_cast<double>(RAND_MAX) * RAND_MAX);
     if (result > 1) {
         cout << seed << ' ' << result << endl;

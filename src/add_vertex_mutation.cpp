@@ -50,10 +50,18 @@ double AddVertexMutation::get_delta_penalty(
         min2 = min(min2, total_distances[i]);
         max2 = max(max2, total_distances[i]);
     }
+    
+    int number_of_greater_or_equal_routes = 0;
+    for (unsigned i = 0; i < problem.answer.size(); ++i) {
+        number_of_greater_or_equal_routes += static_cast<int>(problem.answer[i].size() >= problem.answer[line_number].size());
+    }
+    // 1, if maximum vertex count in single route is updated, else zero
+    int delta_difference_locations = static_cast<int>(number_of_greater_or_equal_routes == 1);
 
     double delta_difference_penalty = ((max2 - min2) - (max1 - min1)) * penalty_sizes_["Difference penalty"];
     double delta_maximum_penalty = (max2 - max1) * penalty_sizes_["Maximum penalty"];
-    return delta_distance_penalty + delta_difference_penalty + delta_maximum_penalty;
+    double delta_difference_locations_penalty = delta_difference_locations * penalty_sizes_["Vertex difference penalty"];
+    return delta_distance_penalty + delta_difference_penalty + delta_maximum_penalty + delta_difference_locations_penalty;
 }
 
 void AddVertexMutation::mutate(

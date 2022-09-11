@@ -28,6 +28,7 @@ private:
     void init_();
     void swap_tails_();
     void update_temperature_(int step_number);
+    int choose_mutation_number_();
     double try_mutate_();
 
     Problem& problem_;

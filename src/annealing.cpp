@@ -87,9 +87,7 @@ void Annealing::update_temperature_(int step_number) {
     temperature_ = initial_temperature_ * (1.0 - static_cast<double>(step_number) / steps_number_);
 }
 
-double Annealing::try_mutate_() {
-    // returns new total penalty after the mutation did or did not happen
-
+int Annealing::choose_mutation_number_() {
     int mutation_number = -1;
     double mutation_lucky = random_double();
     double total = 0;
@@ -100,7 +98,13 @@ double Annealing::try_mutate_() {
             break;
         }
     }
+    return mutation_number;
+}
 
+double Annealing::try_mutate_() {
+    // returns new total penalty after the mutation did or did not happen
+
+    int mutation_number = choose_mutation_number_();
     shared_ptr<Mutation>& mutation = mutations_[mutation_number];
     int mutation_seed = rand();
     double delta_penalty = mutation->get_delta_penalty(problem_, mutation_seed);

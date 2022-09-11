@@ -44,7 +44,6 @@ void Problem::initialize_total_distances() {
 
 void Problem::init_() {
     // initialize some default answer
-
     answer.resize(problem_size_);
 
     // initialize required_vertex_set_
@@ -55,6 +54,7 @@ void Problem::init_() {
 
     // split vertex into 3 ~equal parts, arrange them greedily
     vector<unordered_set<int>> parts(answer.size());
+    cout << "Routes number: " << parts.size() << endl;
     for (unsigned v = 0; v < distance_matrix.size(); ++v) {
         if (is_required_vertex(v)) {
             for (unsigned j = 0; j < parts.size(); ++j) {

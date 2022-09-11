@@ -7,6 +7,7 @@
 #include "add_vertex_mutation.h"
 #include "maximum_penalty.h"
 #include "difference_penalty.h"
+#include "vertex_difference_penalty.h"
 #include "swap_between_lines_mutation.h"
 #include "transfer_mutation.h"
 #include "swap_head_tail_mutation.h"
@@ -18,6 +19,7 @@
 #include <time.h>
 #include <fstream>
 #include <utility>
+#include <string>
 
 using std::vector;
 using std::cout;
@@ -60,8 +62,9 @@ void save_answer(const string& filename, const Problem& problem) {
 vector<shared_ptr<Penalty>> get_penalties() {
     return {
         make_shared<DistancePenalty>(10),
-        make_shared<MaximumPenalty>(30),
-        make_shared<DifferencePenalty>(2)
+        make_shared<MaximumPenalty>(10),
+        make_shared<DifferencePenalty>(5),
+        make_shared<VertexDifferencePenalty>(20)
     };
 }
 
@@ -128,14 +131,28 @@ void solve_problem(Problem& problem, const double temperature, const int steps_n
     print_final_penalty_info(annealing, problem, penalties);
 }
 
-void make_rectangle_test(int n, int m, int routes_number) {
-    const vector<pair<double, double>> coords = make_rectangle(n, m);
+void make_rectangle_test(int n, int m, int routes_number, const std::string& file_with_coords="", int locations_number=-1) {
+    vector<pair<double, double>> coords;
+    if (file_with_coords == "") {
+        coords = make_rectangle(n, m);
+    } else {
+        ifstream in_coords(file_with_coords);
+        assert(locations_number > 0);
+        for (int i = 0; i < locations_number; ++i) {
+            double lat;
+            double lon;
+            in_coords >> lat >> lon;
+            coords.push_back({lat * 1000, lon * 1000});
+        }
+        std::cout << "Read " << coords.size() << " locations from " << file_with_coords << std::endl;
+    }
 
     ofstream out_coords("test_results/coords.txt");
     for (unsigned i = 0; i < coords.size(); ++i) {
         out_coords << coords[i].first << " " << coords[i].second << endl;
     }
     out_coords.close();
+    
 
     DistanceMatrix distance_matrix = get_euclidean_distance_matrix(coords);
     Problem problem(distance_matrix, {}, routes_number);
@@ -148,8 +165,8 @@ void make_rectangle_test(int n, int m, int routes_number) {
 
     print_initial_penalties_info(penalties, problem);
 
-    const double temperature = 25;
-    const int steps_number = 1000 * 1000000;
+    const double temperature = 100;
+    const int steps_number = 10 * 1000000;
     Annealing annealing(problem, temperature, penalties, mutations, mutation_probabilities, steps_number);
 
     const int checkpoint_period = steps_number / 100;
@@ -172,6 +189,6 @@ int main() {
     // TODO: smarter problem initializing
     // TODO: swap halves of 2 random lines once in several iterations in order to avoid stagnation
 
-    make_rectangle_test(17, 29, 10);
+    make_rectangle_test(17, 29, 12, "./input/new_york_coords.txt", 531);
     return 0;
 }

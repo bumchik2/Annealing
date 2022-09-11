@@ -20,6 +20,7 @@ public:
     void mutate(Problem& problem, int random_seed) override;
 
 private:
+    vector<int> choose_mutation_parameters_(const Problem& problem);
     vector<double> get_delta_distances_(const Problem& problem, int line_number1, int line_number2, unsigned pos1, unsigned pos2);
 
 };
