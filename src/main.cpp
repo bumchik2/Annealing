@@ -12,6 +12,7 @@
 #include "transfer_mutation.h"
 #include "swap_head_tail_mutation.h"
 #include "csv_utils.h"
+#include <time.h>
 
 #include <iostream>
 #include <vector>
@@ -166,7 +167,7 @@ void make_rectangle_test(int n, int m, int routes_number, const std::string& fil
     print_initial_penalties_info(penalties, problem);
 
     const double temperature = 100;
-    const int steps_number = 10 * 1000000;
+    const int steps_number = 300 * 1000000;
     Annealing annealing(problem, temperature, penalties, mutations, mutation_probabilities, steps_number);
 
     const int checkpoint_period = steps_number / 100;
@@ -189,6 +190,9 @@ int main() {
     // TODO: smarter problem initializing
     // TODO: swap halves of 2 random lines once in several iterations in order to avoid stagnation
 
+    time_t start = time(0);
     make_rectangle_test(17, 29, 12, "./input/new_york_coords.txt", 531);
+    double seconds_since_start = difftime(time(0), start);
+    cout << "Общее время оптимизации: " << int(seconds_since_start) << "с" << endl;
     return 0;
 }
